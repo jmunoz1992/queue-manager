@@ -11,6 +11,9 @@ module.exports = app => {
     return context.github.issues.createComment(issueComment)
   })
 
+  // When the `READY_FOR_MERGE` label is added, a `QUEUED FOR MERGE #X` label will also be added depending the next open spot in the queue.
+  // If all `QUEUED FOR MERGE #X` labels are being used, the `QUEUE IS CURRENTLY FULL` label will be added to the PR, along with a helpful comment.
+  // The individual will need to remove the `READY_FOR_MERGE` label, and add this label in a few minutes to re-apply for the queue.
   app.on('pull_request.labeled', async context => {
     if (context.payload.label.name === 'READY_FOR_MERGE') {
       const repoPullRequests = await context.github.issues.listForRepo({owner: 'jmunoz1992', repo: 'test-wip-app'});
@@ -23,6 +26,7 @@ module.exports = app => {
 
       for (let i = 0; i < repoPullRequests.data.length; i++) {
         const number = repoPullRequests.data[i].number;
+
         // TODO FIND WAY TO GET REPO AND OWNER?
         const pullRequestLabels = await context.github.issues.listLabelsOnIssue({owner: 'jmunoz1992', repo: 'test-wip-app', number: number});
 
@@ -31,6 +35,12 @@ module.exports = app => {
 
           if (labelName === 'QUEUED FOR MERGE #' + totalQueuedLabels) {
             labelToSet = 'QUEUE IS CURRENTLY FULL';
+            await context.github.issues.createComment({
+              owner: 'jmunoz1992',
+              repo: 'test-wip-app',
+              number: context.payload.number,
+              body: 'Sorry, the queue is currently full. Please remove the `READY_FOR_MERGE` label and add this label in a few minutes when the queue is free. Please also remove the `QUEUE IS CURRENTLY FULL` label.'
+            });
           } else if (labelToSet !== 'QUEUE IS CURRENTLY FULL' && labelName.includes('QUEUED FOR MERGE #')) {
             const currentQueueNum = parseInt(labelName[labelName.length - 1], 10);
 
@@ -48,18 +58,8 @@ module.exports = app => {
       }
   })
 
-  getTotalQueueLabelsLength = function(repoLabels) {
-    let totalQueueLabelsLength = 0;
-    for (let i = 0; i < repoLabels.data.length; i++) {
-      const label = repoLabels.data[i].name;
 
-      if (label.includes('QUEUED FOR MERGE #')) {
-        totalQueueLabelsLength++;
-      }
-    }
-    return totalQueueLabelsLength;
-  };
-
+  // When a label is removed, the PRs containing the `QUEUED FOR MERGE #` labels will be updated.
   app.on('pull_request.unlabeled', async context => {
     const theUnlabeledLabelName = context.payload.label.name;
 
@@ -68,74 +68,12 @@ module.exports = app => {
 
       if (isNaN(labelNumRemoved)) return;
 
-      const repoLabels = await context.github.issues.listLabelsForRepo({owner: 'jmunoz1992', repo: 'test-wip-app'});
-      const totalQueuedLabels = getTotalQueueLabelsLength(repoLabels);
-
-      if (labelNumRemoved < totalQueuedLabels) {
-        await updateBegAndMiddleQueue(context, labelNumRemoved);
-      } else if(labelNumRemoved === totalQueuedLabels) {
-        await updateEndOfQueue(context, labelNumRemoved);
-      }
+      await updateQueue(context, labelNumRemoved);
     }
   })
 
-  updateEndOfQueue = async function(context, labelNumRemoved) {
-    const repoPullRequests = await context.github.issues.listForRepo({owner: 'jmunoz1992', repo: 'test-wip-app'});
-
-    let fullLabelReplacementFound = false;
-
-    for (let i = 0; i < repoPullRequests.data.length; i++) {
-      const prNumber = repoPullRequests.data[i].number;
-
-      // TODO FIND WAY TO GET REPO AND OWNER?
-      const pullRequestLabels = await context.github.issues.listLabelsOnIssue({owner: 'jmunoz1992', repo: 'test-wip-app', number: prNumber});
-
-      const updatedLabels = [];
-
-      for (let j = 0; j < pullRequestLabels.data.length; j++) {
-        const labelName = pullRequestLabels.data[j].name;
-
-        if (labelName.includes('QUEUE IS CURRENTLY FULL') && !fullLabelReplacementFound) {
-          updatedLabels.push('QUEUED FOR MERGE #' + labelNumRemoved);
-          fullLabelReplacementFound = true;
-        } else {
-          updatedLabels.push(labelName);
-        }
-      }
-
-      if (updatedLabels.length > 0) {
-        await context.github.issues.replaceLabels({ owner:'jmunoz1992', repo:'test-wip-app', number: prNumber, labels: updatedLabels });
-      }
-    }
-  }
-
-  updateBegAndMiddleQueue = async function(context, labelNumRemoved) {
-    const repoPullRequests = await context.github.issues.listForRepo({owner: 'jmunoz1992', repo: 'test-wip-app'});
-    for (let i = 0; i < repoPullRequests.data.length; i++) {
-      const prNumber = repoPullRequests.data[i].number;
-
-      // TODO FIND WAY TO GET REPO AND OWNER?
-      const pullRequestLabels = await context.github.issues.listLabelsOnIssue({owner: 'jmunoz1992', repo: 'test-wip-app', number: prNumber});
-
-      const updatedLabels = [];
-
-      for (let j = 0; j < pullRequestLabels.data.length; j++) {
-        const labelName = pullRequestLabels.data[j].name;
-        const lastCharToInt = parseInt(labelName[labelName.length - 1]);
-
-        if (labelName.includes('QUEUED FOR MERGE #') && !isNaN(lastCharToInt) && lastCharToInt > labelNumRemoved) {
-          updatedLabels.push('QUEUED FOR MERGE #' + (lastCharToInt - 1));
-        } else {
-          updatedLabels.push(labelName);
-        }
-      }
-
-      if (updatedLabels.length > 0) {
-        await context.github.issues.replaceLabels({ owner:'jmunoz1992', repo:'test-wip-app', number: prNumber, labels: updatedLabels });
-      }
-    }
-  };
-
+  // When any changes are made to a PR, there will be checks to see if the PR contains the `QUEUED FOR MERGE #1` label.
+  // If the PR contains this label, then the PR is good to merge. If it does not contain this label, the PR cannot be merged.
   app.on([
     'pull_request.opened',
     'pull_request.edited',
@@ -181,9 +119,42 @@ module.exports = app => {
     return isQueuedNumOne;
   }
 
-  // For more information on building apps:
-  // https://probot.github.io/docs/
+  getTotalQueueLabelsLength = function(repoLabels) {
+    let totalQueueLabelsLength = 0;
+    for (let i = 0; i < repoLabels.data.length; i++) {
+      const label = repoLabels.data[i].name;
 
-  // To get your app running against GitHub, see:
-  // https://probot.github.io/docs/development/
+      if (label.includes('QUEUED FOR MERGE #')) {
+        totalQueueLabelsLength++;
+      }
+    }
+    return totalQueueLabelsLength;
+  };
+
+  updateQueue = async function(context, labelNumRemoved) {
+    const repoPullRequests = await context.github.issues.listForRepo({owner: 'jmunoz1992', repo: 'test-wip-app'});
+    for (let i = 0; i < repoPullRequests.data.length; i++) {
+      const prNumber = repoPullRequests.data[i].number;
+
+      // TODO FIND WAY TO GET REPO AND OWNER?
+      const pullRequestLabels = await context.github.issues.listLabelsOnIssue({owner: 'jmunoz1992', repo: 'test-wip-app', number: prNumber});
+
+      const updatedLabels = [];
+
+      for (let j = 0; j < pullRequestLabels.data.length; j++) {
+        const labelName = pullRequestLabels.data[j].name;
+        const lastCharToInt = parseInt(labelName[labelName.length - 1]);
+
+        if (labelName.includes('QUEUED FOR MERGE #') && !isNaN(lastCharToInt) && lastCharToInt > labelNumRemoved) {
+          updatedLabels.push('QUEUED FOR MERGE #' + (lastCharToInt - 1));
+        } else {
+          updatedLabels.push(labelName);
+        }
+      }
+
+      if (updatedLabels.length > 0) {
+        await context.github.issues.replaceLabels({ owner:'jmunoz1992', repo:'test-wip-app', number: prNumber, labels: updatedLabels });
+      }
+    }
+  };
 }

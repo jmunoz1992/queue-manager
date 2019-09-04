@@ -1,6 +1,9 @@
 # queue-manager
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that A Probot app
+> A GitHub App that manages the queue for PRs ready to merge.
+
+## Details
+- When the `READY_FOR_MERGE` label is added to the PR, a `QUEUED FOR MERGE #X` label will be added. The `X`  will be the next open spot in the queue.
 
 ## Setup
 
