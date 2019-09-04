@@ -20,6 +20,16 @@ npm install
 npm run dev
 
 # Track webhook requests at: https://smee.io/1nV2sEgmi1rNYmt
+
+# Update all the below vars in index.js
+var owner = 'jmunoz1992'; // insert owner's github username here
+var repo = 'test-wip-app'; // insert repo you want to test here
+
+# Change the below label vars based on the queue labels in your PR in index.js
+var triggerLabel = 'READY_FOR_MERGE';
+var queueLabel = 'QUEUED FOR MERGE #';
+var firstInQueueLabel = 'QUEUED FOR MERGE #1';
+var fullQueueLabel = 'QUEUE IS CURRENTLY FULL';
 ```
 
 ## Contributing
