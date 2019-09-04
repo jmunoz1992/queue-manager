@@ -1,9 +1,14 @@
 # queue-manager
 
-> A GitHub App that manages the queue for PRs ready to merge.
+A GitHub App that manages the queue for PRs ready to merge.
 
 ## Details
 - When the `READY_FOR_MERGE` label is added to the PR, a `QUEUED FOR MERGE #X` label will be added. The `X`  will be the next open spot in the queue.
+
+- If all the `QUEUED FOR MERGE #X` labels are assigned (no more spots in the queue), the `QUEUE IS CURRENTLY FULL` full label will appear on the PR. The assignee needs to remove the `READY_FOR_MERGE` label and `QUEUE IS CURRENTLY FULL` labels, and wait a few minutes before re-applying back to the queue. To re-apply into the queue, just add the `READY_FOR_MERGE` label.
+
+- The queue is updated when any of the `QUEUED FOR MERGE #X` labels is removed in any of the PRs. Each of the PRs containing these labels will have updated queue labels.
+
 
 ## Setup
 
@@ -12,7 +17,9 @@
 npm install
 
 # Run the bot
-npm start
+npm run dev
+
+# Track webhook requests at: https://smee.io/1nV2sEgmi1rNYmt
 ```
 
 ## Contributing
@@ -23,4 +30,4 @@ For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
-[ISC](LICENSE) © 2019 jamunoz <jamunoz@expedia.com>
+[ISC](LICENSE) © 2019 jmunoz1992 <jasmine.esplago.munoz@gmail.com>
