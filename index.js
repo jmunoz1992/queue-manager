@@ -3,16 +3,15 @@
  * @param {import('probot').Application} app
  */
 
-var owner = 'jmunoz1992'; // insert owner's github username here
-var repo = 'test-wip-app'; // insert repo you want to test here
+const findIfPRQueuedNumOne = require('./util/findIfPRQueuedNumOne');
 
 /*
-* Change the below label vars based on the queue labels in your PR
+* Change the below label consts based on the queue labels in your PR
 * */
-var triggerLabel = 'READY_FOR_MERGE';
-var queueLabel = 'QUEUED FOR MERGE #';
-var firstInQueueLabel = 'QUEUED FOR MERGE #1';
-var fullQueueLabel = 'QUEUE IS CURRENTLY FULL';
+const triggerLabel = 'READY_FOR_MERGE';
+const queueLabel = 'QUEUED FOR MERGE #';
+const firstInQueueLabel = 'QUEUED FOR MERGE #1';
+const fullQueueLabel = 'QUEUE IS CURRENTLY FULL';
 
 
 /*
@@ -33,8 +32,10 @@ module.exports = app => {
   * */
   app.on('pull_request.labeled', async context => {
     if (context.payload.label.name === triggerLabel) {
-      const repoPullRequests = await context.github.issues.listForRepo({ owner: owner, repo: repo });
-      const repoLabels = await context.github.issues.listLabelsForRepo({ owner: owner, repo: repo });
+      const ownerRepoNumberInfo = context.issue();
+
+      const repoPullRequests = await context.github.issues.listForRepo(ownerRepoNumberInfo);
+      const repoLabels = await context.github.issues.listLabelsForRepo(ownerRepoNumberInfo);
 
       const totalQueuedLabels = getTotalQueueLabelsLength(repoLabels);
 
@@ -42,21 +43,19 @@ module.exports = app => {
       let labelNum = 1;
 
       for (let i = 0; i < repoPullRequests.data.length; i++) {
-        const prNumber = repoPullRequests.data[i].number;
-
-        const pullRequestLabels = await context.github.issues.listLabelsOnIssue({ owner: owner, repo: repo, number: prNumber });
+        ownerRepoNumberInfo.number = repoPullRequests.data[i].number;
+        const pullRequestLabels = await context.github.issues.listLabelsOnIssue(ownerRepoNumberInfo);
 
         for (let j = 0; j < pullRequestLabels.data.length; j++) {
           const labelName = pullRequestLabels.data[j].name;
 
           if (labelName === queueLabel + totalQueuedLabels) {
             labelToSet = fullQueueLabel;
-            await context.github.issues.createComment({
-              owner: owner,
-              repo: repo,
-              number: context.payload.number,
-              body: commentWhenQueueIsFull
-            });
+
+            const commentLabel = context.issue({ body: commentWhenQueueIsFull });
+            commentLabel.number = context.payload.number;
+            await context.github.issues.createComment(commentLabel);
+
           } else if (labelToSet !== fullQueueLabel && labelName.includes(queueLabel)) {
             const currentQueueNum = parseInt(labelName[labelName.length - 1], 10);
 
@@ -101,8 +100,8 @@ module.exports = app => {
     'pull_request.synchronize',
     'pull_request.reopened'
   ], async context => {
-    const prNumber = context.payload.number;
-    const labelsOnPR = await context.github.issues.listLabelsOnIssue({owner: owner, repo: repo, number: prNumber});
+    const ownerRepoNumberInfo = context.issue();
+    const labelsOnPR = await context.github.issues.listLabelsOnIssue(ownerRepoNumberInfo);
     const pullRequest = context.payload.pull_request;
 
     const checkOptions = {
@@ -129,20 +128,6 @@ module.exports = app => {
   });
 
   /*
-  * Determines if any of the labels in the PR has the first in the queue label.
-  * */
-  findIfPRQueuedNumOne = function(dataLabels) {
-    let isQueuedNumOne = false;
-    for (let i = 0; i < dataLabels.length; i++) {
-      const labelName = dataLabels[i].name;
-      if (labelName === firstInQueueLabel) {
-        isQueuedNumOne = true;
-      }
-    }
-    return isQueuedNumOne;
-  };
-
-  /*
   * Determines how many queue labels are there for the given repo
   * */
   getTotalQueueLabelsLength = function(repoLabels) {
@@ -162,11 +147,13 @@ module.exports = app => {
   * This update is triggered when one of these labels are removed from a PR.
   * */
   updateQueue = async function(context, labelNumRemoved) {
-    const repoPullRequests = await context.github.issues.listForRepo({ owner: owner, repo: repo });
-    for (let i = 0; i < repoPullRequests.data.length; i++) {
-      const prNumber = repoPullRequests.data[i].number;
+    const ownerRepoNumberInfo = context.issue();
+    const repoPullRequests = await context.github.issues.listForRepo(ownerRepoNumberInfo);
 
-      const pullRequestLabels = await context.github.issues.listLabelsOnIssue({ owner: owner, repo: repo, number: prNumber });
+    for (let i = 0; i < repoPullRequests.data.length; i++) {
+      const prLabels = context.issue();
+      prLabels.number = repoPullRequests.data[i].number;
+      const pullRequestLabels = await context.github.issues.listLabelsOnIssue(prLabels);
 
       const updatedLabels = [];
 
@@ -182,7 +169,9 @@ module.exports = app => {
       }
 
       if (updatedLabels.length > 0) {
-        await context.github.issues.replaceLabels({ owner: owner, repo: repo, number: prNumber, labels: updatedLabels });
+        const replaceLabels = context.issue({  labels: updatedLabels });
+        replaceLabels.number = repoPullRequests.data[i].number;
+        await context.github.issues.replaceLabels(replaceLabels);
       }
     }
   };
