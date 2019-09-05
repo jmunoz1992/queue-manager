@@ -1,6 +1,6 @@
 const handleLabelAdditionUpdate = require('./lib/handleLabelAdditionUpdate');
 const handleLabelRemovalUpdate = require('./lib/handleLabelRemovalUpdate');
-const handlePullRequestChecks = require('./lib/handlePullRequestChecks');
+const handlePullRequestChecks = require('./lib/handlePRChecks');
 
 module.exports = app => {
   app.log('Yay, the app was loaded!');
