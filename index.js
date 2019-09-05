@@ -4,15 +4,10 @@
  */
 
 const findIfPRQueuedNumOne = require('./util/findIfPRQueuedNumOne');
+const getTotalQueueLabelsLength = require('./util/getTotalQueueLabelsLength');
+const updateQueue = require('./util/updateQueue');
 
-/*
-* Change the below label consts based on the queue labels in your PR
-* */
-const triggerLabel = 'READY_FOR_MERGE';
-const queueLabel = 'QUEUED FOR MERGE #';
-const firstInQueueLabel = 'QUEUED FOR MERGE #1';
-const fullQueueLabel = 'QUEUE IS CURRENTLY FULL';
-
+const { triggerLabel, queueLabel, firstInQueueLabel, fullQueueLabel } = require('./util/queueLabels');
 
 /*
 * The below comment will appear on the PR when the assignee tries to queue to merge, but the queue is full
@@ -126,53 +121,4 @@ module.exports = app => {
 
     return context.github.checks.create(context.repo(checkOptions));
   });
-
-  /*
-  * Determines how many queue labels are there for the given repo
-  * */
-  getTotalQueueLabelsLength = function(repoLabels) {
-    let totalQueueLabelsLength = 0;
-    for (let i = 0; i < repoLabels.data.length; i++) {
-      const label = repoLabels.data[i].name;
-
-      if (label.includes(queueLabel)) {
-        totalQueueLabelsLength++;
-      }
-    }
-    return totalQueueLabelsLength;
-  };
-
-  /*
-  * Updates all the queue labels in all PRs.
-  * This update is triggered when one of these labels are removed from a PR.
-  * */
-  updateQueue = async function(context, labelNumRemoved) {
-    const ownerRepoNumberInfo = context.issue();
-    const repoPullRequests = await context.github.issues.listForRepo(ownerRepoNumberInfo);
-
-    for (let i = 0; i < repoPullRequests.data.length; i++) {
-      const prLabels = context.issue();
-      prLabels.number = repoPullRequests.data[i].number;
-      const pullRequestLabels = await context.github.issues.listLabelsOnIssue(prLabels);
-
-      const updatedLabels = [];
-
-      for (let j = 0; j < pullRequestLabels.data.length; j++) {
-        const labelName = pullRequestLabels.data[j].name;
-        const lastCharToInt = parseInt(labelName[labelName.length - 1]);
-
-        if (labelName.includes(queueLabel) && !isNaN(lastCharToInt) && lastCharToInt > labelNumRemoved) {
-          updatedLabels.push(queueLabel + (lastCharToInt - 1));
-        } else {
-          updatedLabels.push(labelName);
-        }
-      }
-
-      if (updatedLabels.length > 0) {
-        const replaceLabels = context.issue({  labels: updatedLabels });
-        replaceLabels.number = repoPullRequests.data[i].number;
-        await context.github.issues.replaceLabels(replaceLabels);
-      }
-    }
-  };
 }
