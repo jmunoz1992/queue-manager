@@ -1,0 +1,62 @@
+{
+  "id": "/queue-manager",
+  "labels": {
+    "desired_instances": "2",
+    "max_instances": "4",
+    "intervals_before_autoscaling": "1",
+    "autoscaling_threshold_cpu_pct": "80",
+    "autoscaling_threshold_memory_pct": "80",
+    "autoscaling_threshold_connection_count": "12"
+  },
+  "instances": 1,
+  "cpus": 0.5,
+  "mem": 2048,
+  "disk": 0,
+  "env": {
+    "OWNER": "jamunoz@expedia.com",
+    "TEAM": "lodging-shopping"
+  },
+  "constraints": [
+    [ "service_cluster", "CLUSTER", "general" ]
+  ],
+  "uris": [
+    "file:///root/dockerauth.tar.gz"
+  ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [ ],
+    "docker": {
+      "image": "kumo-docker-release-local.artylab.expedia.biz/library/queue-manager:latest",
+      "forcePullImage": true,
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 0,
+          "protocol": "tcp"
+        }
+      ],
+      "parameters": [
+        {
+          "key": "log-driver",
+          "value": "fluentd"
+        },
+        {
+          "key": "log-opt",
+          "value": "env=MARATHON_APP_ID,HOST"
+        }
+      ]
+    }
+  },
+  "healthChecks": [
+    {
+      "path": "/isActive",
+      "protocol": "HTTP",
+      "portIndex": 0,
+      "gracePeriodSeconds": 90,
+      "intervalSeconds": 10,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3
+    }
+  ]
+}
