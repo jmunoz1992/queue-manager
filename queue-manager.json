@@ -54,13 +54,14 @@
   },
   "healthChecks": [
     {
-      "path": "/isActive",
-      "protocol": "HTTP",
-      "portIndex": 0,
-      "gracePeriodSeconds": 90,
-      "intervalSeconds": 10,
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
       "timeoutSeconds": 20,
-      "maxConsecutiveFailures": 3
+      "maxConsecutiveFailures": 3,
+      "portIndex": 0,
+      "path": "/",
+      "protocol": "HTTP",
+      "ignoreHttp1xx": false
     }
   ]
 }
