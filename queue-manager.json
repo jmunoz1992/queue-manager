@@ -45,10 +45,6 @@
     }
   },
   "env": {
-    "APP_ID": "15",
-    "WEBHOOK_SECRET": "secret",
-    "NODE_ENV": "production",
-    "GHE_HOST": "github.expedia.biz",
     "OWNER": "jamunoz@expedia.com",
     "TEAM": "lodging-shopping"
   },
