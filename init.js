@@ -4,6 +4,8 @@
  Install Expedia CA files
 */
 var rootCas = require('ssl-root-cas').inject()
+const fs = require('fs');
+
 
 rootCas
   .addFile(__dirname + '/ssl/Internal2015C1.crt')
@@ -23,18 +25,21 @@ var options = {
 // get new instance of the client
 var vault = require('node-vault')(options)
 
-var PRIVATE_KEY
 var APP_ID
 var WEBHOOK_SECRET
 
 vault.read('secret/QueueManagerGithubApp')
   .then((result) => {
     var data = result.data
-    PRIVATE_KEY = data.PRIVATE_KEY
     APP_ID = data.APP_ID
     WEBHOOK_SECRET = data.WEBHOOK_SECRET
 
-    console.log('export PRIVATE_KEY="' + PRIVATE_KEY.trim() + '"')
+    // write to a new file named 2pac.txt
+    fs.writeFileSync('private_key.pem', data.PRIVATE_KEY, (err) => {
+      // throws an error, you could also catch it here
+      if (err) throw err
+    })
+
     console.log('export APP_ID="' + APP_ID.trim() + '"')
     console.log('export WEBHOOK_SECRET="' + WEBHOOK_SECRET.trim() + '"')
   })
