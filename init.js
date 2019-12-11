@@ -19,7 +19,7 @@ require('https').globalAgent.options.ca = rootCas
 var options = {
   apiVersion: 'v1', // default
   endpoint: 'https://vault.ch.lab.stockyard.io:8200',
-  token: '025e456a-2389-2a20-e18c-768fbd11c315'
+  token: process.env.VAULT_TOKEN
 }
 
 // get new instance of the client
