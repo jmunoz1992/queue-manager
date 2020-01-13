@@ -6,6 +6,5 @@ module.exports = {
     triggerLabel: 'READY FOR MERGE',
     queueLabel: 'QUEUED FOR MERGE #',
     firstInQueueLabel: 'QUEUED FOR MERGE #1',
-    fullQueueLabel: 'QUEUE IS CURRENTLY FULL',
     coreApprovalLabel: 'CORE APPROVED'
-}
+};

@@ -15,4 +15,5 @@ module.exports = async context => {
   }
 
   await context.github.issues.replaceLabels({ ...ownerRepoNumberInfo, labels: updatedLabels });
+  await updateQueue(context, 1);
 };

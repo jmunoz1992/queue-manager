@@ -23,13 +23,29 @@ module.exports = async (context, labelNumRemoved) => {
             if (labelName.includes(queueLabel) && !isNaN(lastCharToInt) && lastCharToInt > labelNumRemoved) {
                 updatedLabels.push(queueLabel + (lastCharToInt - 1));
             } else {
-                updatedLabels.push(labelName);
+                updatedLabels.unshift(labelName);
             }
         }
 
         if (updatedLabels.length > 0) {
             const replaceLabels = context.issue({  labels: updatedLabels });
             replaceLabels.number = repoPullRequests.data[i].number;
+
+            const lastLabel = updatedLabels[updatedLabels.length - 1];
+            const updatedLabelNum = parseInt(lastLabel.charAt(lastLabel.length - 1));
+
+            if (!isNaN(updatedLabelNum)) {
+                let message = 'Your PR is currently #' + updatedLabelNum + ' in the queue. ';
+
+                if (updatedLabelNum === 1) {
+                    message += 'You can now merge.';
+                }
+
+                const commentLabel = context.issue({ body: message });
+                commentLabel.number = repoPullRequests.data[i].number;
+                await context.github.issues.createComment(commentLabel);
+            }
+
             await context.github.issues.replaceLabels(replaceLabels);
         }
     }
