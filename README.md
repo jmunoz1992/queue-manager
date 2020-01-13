@@ -17,7 +17,7 @@ A GitHub App that manages the PR queue when merging into production.
 - Once the PR is merged, the `QUEUED FOR MERGE #1` label will be removed from the PR and update all the other PRs in the queue.
 
 ## Installing This Github App For A Repo
-1. Go here: https://github.expedia.biz/github-apps/queue-manager.
+1. Go here: https://github.com/apps/queue-manager.
 2. Click the `Configure` button on the top right.
 3. Click the org the repo is in.
 4. Click `Select repositories` and add the repository you want this GitHub app to be used in.
@@ -29,7 +29,6 @@ A GitHub App that manages the PR queue when merging into production.
     1. Need a `READY FOR MERGE` label
     2. Need a `QUEUED FOR MERGE #1`, `QUEUED FOR MERGE #2`, …however many you want to be put in the queue, there is no limit as long as the label starts with `QUEUED FOR MERGE #`
     3. Need a `CORE APPROVED` label
-    4. Need a `QUEUE IS CURRENTLY FULL` label
 2. To add a PR to the queue, make sure to first add the `CORE_APPROVED` label, then the `READY FOR MERGE` label.
 3. To remove a PR from the queue, make sure to remove the `QUEUED FOR MERGE #X` label and `READY FOR MERGE` label from the PR
 4.  Test try with a few trial PRs (make at least 3 PRs)
@@ -44,4 +43,4 @@ For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
-[ISC](LICENSE) © 2019 jamunoz <jamunoz@expedia.com>
+[ISC](LICENSE) © 2019 jmunoz1992

@@ -2,24 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6302ace9-39b0-4083-9584-6be33f854f5a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/$CACHE_FILE$" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/queue-manager.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/queue-manager.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/handleLabelAdditionUpdate.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/handleLabelAdditionUpdate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/handleLabelRemovalUpdate.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/handleLabelRemovalUpdate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/handleQueueLabelRemovalAfterPRMerge" beforeDir="false" afterPath="$PROJECT_DIR$/lib/handleQueueLabelRemovalAfterPRMerge" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/queueLabels.js" beforeDir="false" afterPath="$PROJECT_DIR$/util/queueLabels.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/updateQueue.js" beforeDir="false" afterPath="$PROJECT_DIR$/util/updateQueue.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +59,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578870670183</updated>
-      <workItem from="1578870674936" duration="15195000" />
+      <workItem from="1578870674936" duration="15557000" />
     </task>
     <servers />
   </component>
@@ -81,10 +67,11 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="578" y="290" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1578929508940">
-      <screen x="0" y="23" width="1680" height="1027" />
+    <state x="2341" y="281" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1578954549411">
+      <screen x="1680" y="0" width="1920" height="1080" />
     </state>
     <state x="578" y="290" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1578929508940" />
+    <state x="2341" y="281" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/1680.0.1920.1080/0.0.1680.1050@1680.0.1920.1080" timestamp="1578954549411" />
     <state x="2258" y="290" width="763" height="500" key="find.popup" timestamp="1578948714003">
       <screen x="1680" y="0" width="1920" height="1080" />
     </state>
