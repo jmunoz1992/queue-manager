@@ -11,7 +11,7 @@ module.exports = async context => {
 
   for (let i = 0; i < labelsOnPR.data.length; i++) {
     const labelName = labelsOnPR.data[i].name;
-    if (!labelName.includes(queueLabel) || !labelName.includes(triggerLabel)) {
+    if (!labelName.includes(queueLabel) && !labelName.includes(triggerLabel)) {
       updatedLabels.push(labelName);
     }
   }
