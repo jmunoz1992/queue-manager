@@ -2,6 +2,8 @@
 * When the PR is merged, the `QUEUED FOR MERGE #1` label will be removed from the PR to update the rest of the queue.
 * */
 
+const { triggerLabel, queueLabel } = require('../util/queueLabels');
+
 module.exports = async context => {
   const ownerRepoNumberInfo = context.issue();
   const labelsOnPR = await context.github.issues.listLabelsOnIssue(ownerRepoNumberInfo);
@@ -9,7 +11,7 @@ module.exports = async context => {
 
   for (let i = 0; i < labelsOnPR.data.length; i++) {
     const labelName = labelsOnPR.data[i].name;
-    if (!labelName.includes('QUEUED FOR MERGE')) {
+    if (!labelName.includes(queueLabel) || !labelName.includes(triggerLabel)) {
       updatedLabels.push(labelName);
     }
   }
