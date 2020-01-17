@@ -24,4 +24,4 @@ module.exports = app => {
 
   // listen to all relevant pull request merge actions
   app.on('pull_request.closed', handleQueueLabelRemovalAfterPRMerge.bind(app));
-}
+};

@@ -4,3 +4,5 @@ sls-probot-response.iml
 .env
 private-key.pem
 package-lock.json
+jspm_packages
+.serverless

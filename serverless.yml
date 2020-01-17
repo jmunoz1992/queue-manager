@@ -1,0 +1,50 @@
+org: jasmineesplagomunoz
+app: queue-manager
+service: queue-manager
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-west-2
+
+functions:
+  router:
+    handler: handler.probot
+
+    environment:
+      WEBHOOK_SECRET: secret
+      APP_ID: 15
+      PRIVATE_KEY: '-----BEGIN RSA PRIVATE KEY-----
+                    MIIEowIBAAKCAQEA7A39r9NZxC58pmFp3lOKFXNqla4+UiNrzTWYFX/ur2yuUpwB
+                    bAGX9obdIZbf7jWtzopk5/RoN1paD6M2Ii3+4Fr+HqhXkyu2RGYAhJTVb4vbie0z
+                    /3VBAt5TfLok84/LFPhdLnXwP4DxH+R0oCr2aJBos0Z/cpbFEkMXBwilcGQ70yNz
+                    dyWtSgPL+cIAmcYUyqNiMyR0JXqZQBweBZc9Xwilgzcs2CdN1I+h96rE2w3anch5
+                    jpSFmS6AKjYXhKR9etS4H7U7tChlB3RHRGSH2+0ld9F0ZGrz2RuNv0ZD39fpk5Ht
+                    tx8dOGZNZm7M2hopsk1P0UT5r3segd2ec4WhkwIDAQABAoIBADxcH4B0NMH7eRg6
+                    VI3rIqX1i02W7oymTgx9JdRpkCj/S1wIVDy/85GwTp8mK0CILVdhAAhn8LYmvly9
+                    STxYMpI/8jb4qNwTE1pOEtfUDvek9ZBBPUiXPPZ0zzhXiNdW74D/OSSGN9alLAMR
+                    sdi646M9OeiNoE02zFGtIhhEV7lzCjkWcyPl/s6DpPxgcNi7Zds9vfGHLrcLkx+h
+                    Yh/IK4/JiKxw+grGNQ0TOraTjYjKoyZPsj6hpi9ReTvsuX+V5wRxEtMSxAFJj8+3
+                    mJAu7l53PT2sLk8z7NizZVYIbpyWrZtKkz/xVMwBBixYSX93VwbEh43Mh8JQofme
+                    2mMdwOECgYEA9qDae69fJLuau4sjP/w8JxjVKlbYxX6m1m0eeVPVUys0FODRtUoj
+                    6/wfbUPYBwAFMdWjnrSh0xe1kd+LXGdYKfqEeIT66JTgnMMDPDqKtoZC8/ER0Fsg
+                    PKqbPxe42IrLo0Sm0SOPbvjTNaoJOAiMDNxJdzmsdiDBVHwKd8nVnkkCgYEA9QZH
+                    b9Dsh7FqsOyogrKta+2Sj72qLXjPgvtAV+XgLANrFyhf7fr1ulYwO2V7e1ZfNzQS
+                    wl+totFH6oMoxOLzrxezOC2KCQA3DaH42FMX1Lw0ijyyr872olXRk5b/GHVC3n24
+                    3/uVeW7faQvD7hjSTGea1PthEVbO/PsG8AE38PsCgYA5TGG2PqZCKHvoeoj0AqwP
+                    AUv1DDxMlgI46x0bXwi+y9jLyPevwMvbtbWvcwWriquqSlI7OwglvOpoO6FrFG99
+                    QUCpp2uLwZr1kLEduxQjF8pSVn2nBKTWs2RiIibF2Gk7Q2XmTPaz94dKfnip1gKD
+                    smI3GuUghLel4zOjZPcGUQKBgQCxwPRiMfbmGdeEsqss5eLZwWfpz3Z9tn8UTqHH
+                    IoUWaQRvsGKnisBphc1Hyb9jIq3Apo5VZIPa8mhxwOT6sIqII3Fo9+CD1xwZT7/v
+                    b5iCRGb5Qj9/O23BJvD7WTeGzsrMDfjoxOMTTVPWKSriuC8YLrEsgZFRuuA+tv25
+                    b6jdsQKBgCwoqqo+mBQO5kC+B+ruW3j2pn+NKaSgBq1Qo6QrebLv6/tu1bfcm0Kb
+                    2306Jl0KRA6t3GLkNZX1G06pV327o8fm2Hiar7wKX8XhKj/BOo7Db3gGiIT/Qvec
+                    reTgQkpnbqLwAL3kKBicgBn2ERMULZ5bExLAAdoJReSFocXFM/Yr
+                    -----END RSA PRIVATE KEY-----'
+      GHE_HOST: github.expedia.biz
+      LOG_FORMAT: json
+
+    events:
+      - http:
+          path: /probot
+          method: post
