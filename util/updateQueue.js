@@ -19,10 +19,16 @@ module.exports = async (context, labelNumRemoved) => {
         for (let j = 0; j < pullRequestLabels.data.length; j++) {
             const labelName = pullRequestLabels.data[j].name;
             const lastCharToInt = parseInt(labelName[labelName.length - 1]);
+            const isQueuedLabel = labelName.includes(queueLabel);
+            const isLabelNumberAfterCurrent = !isNaN(lastCharToInt) && lastCharToInt > labelNumRemoved;
+            const isLabelNumberADuplicate= !isNaN(lastCharToInt) && lastCharToInt === labelNumRemoved;
 
-            if (labelName.includes(queueLabel) && !isNaN(lastCharToInt) && lastCharToInt > labelNumRemoved) {
+            if (isQueuedLabel && isLabelNumberAfterCurrent) {
                 updatedLabels.push(queueLabel + (lastCharToInt - 1));
+            } else if (isQueuedLabel && isLabelNumberADuplicate) {
+                return;
             } else {
+                // adds the other non-queued for merge labels already attached to PR
                 updatedLabels.unshift(labelName);
             }
         }

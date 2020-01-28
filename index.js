@@ -22,6 +22,6 @@ module.exports = app => {
     'pull_request.reopened'
   ], handlePullRequestChecks.bind(app));
 
-  // listen to all relevant pull request merge actions
+  // listen to all relevant pull request merge or closed actions
   app.on('pull_request.closed', handleQueueLabelRemovalAfterPRMerge.bind(app));
 };
