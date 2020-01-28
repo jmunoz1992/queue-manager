@@ -1,7 +1,7 @@
 const handleLabelAdditionUpdate = require('./lib/handleLabelAdditionUpdate');
 const handleLabelRemovalUpdate = require('./lib/handleLabelRemovalUpdate');
-const handlePullRequestChecks = require('./lib/handlePRChecks');
-const handleQueueLabelRemovalAfterPRMerge = require('./lib/handleQueueLabelRemovalAfterPRMerge');
+const handlePullRequestMergeCheck = require('./lib/handlePullRequestMergeCheck');
+const handlePullRequestClosed = require('./lib/handlePullRequestClosed');
 
 module.exports = app => {
   app.log('Yay, the app was loaded!');
@@ -20,8 +20,8 @@ module.exports = app => {
     'pull_request.unlabeled',
     'pull_request.synchronize',
     'pull_request.reopened'
-  ], handlePullRequestChecks.bind(app));
+  ], handlePullRequestMergeCheck.bind(app));
 
   // listen to all relevant pull request merge or closed actions
-  app.on('pull_request.closed', handleQueueLabelRemovalAfterPRMerge.bind(app));
+  app.on('pull_request.closed', handlePullRequestClosed.bind(app));
 };
