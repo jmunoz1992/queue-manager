@@ -3,11 +3,14 @@
 * This update is triggered when one of these labels are removed from a PR.
 * */
 
-const { queueLabel } = require('./queueLabels');
+const { queueLabel, currentQueuedPRs } = require('./queueLabels');
 
 module.exports = async (context, labelNumRemoved) => {
     const ownerRepoNumberInfo = context.issue();
     const repoPullRequests = await context.github.issues.listForRepo(ownerRepoNumberInfo);
+
+    const queuedIndex = currentQueuedPRs[labelNumRemoved - 1];
+    currentQueuedPRs.splice(queuedIndex, 1);
 
     for (let i = 0; i < repoPullRequests.data.length; i++) {
         const prLabels = context.issue();
